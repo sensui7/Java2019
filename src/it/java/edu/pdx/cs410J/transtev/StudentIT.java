@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.transtev;
 
 import edu.pdx.cs410J.InvokeMainTestCase;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,5 +26,25 @@ public class StudentIT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing command line arguments"));
   }
 
+  @Test
+  public void missingGenderPrintsMessageToStandardError() {
+    MainMethodResult result = invokeMain(Student.class, "Name");
+    assertThat(result.getExitCode(), equalTo(1));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing gender"));
+  }
 
+  @Test
+  public void invalidateGpaPrintMessageToStandardError() {
+    MainMethodResult result = invokeMain(Student.class, "Name", "gender", "BAD GPA");
+    assertThat(result.getExitCode(), equalTo(1));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid GPA: BAD GPA"));
+  }
+
+  @Ignore
+  @Test
+  public void invokingMainWithArgumentsFromAssignmentPrintsStudentToStringToStandardOut() {
+    MainMethodResult result = invokeMain(Student.class, "Dave", "male", "3.64", "Algorithms", "Operating Systems", "Java");
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Dave has a GPA of 3.64 and is taking 3 classes: Algorithms, Operating Systems, and Java.  He says \"This class is too much work\"."));
+    assertThat(result.getExitCode(), equalTo(0));
+  }
 }
